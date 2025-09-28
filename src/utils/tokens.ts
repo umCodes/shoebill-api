@@ -15,7 +15,7 @@ export async function storeTokensInCookies(res: Response, tokens: {access?: stri
         httpOnly: true,
         secure: true,
         sameSite: 'none',
-        domain: ".onrender.com",
+        // domain: ".onrender.com",
         maxAge: 1000 * 60 * 60 * 24 * 7 //1 week
     });
 
@@ -24,7 +24,7 @@ export async function storeTokensInCookies(res: Response, tokens: {access?: stri
             httpOnly: true,
             secure: true,
             sameSite: 'none',
-            domain: ".onrender.com",
+            // domain: ".onrender.com",
             maxAge: 1000 * 60 * 60 * 24 * 7 //1 week
         }); 
         
