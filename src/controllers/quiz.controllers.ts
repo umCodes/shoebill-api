@@ -11,6 +11,27 @@ import { subtractUserCredits } from "../utils/credits";
 import { ObjectId } from "mongodb";
 import { User } from "../models/user.types";
 import { llmApiKey, llmModels } from "../constants/env";
+// import { rm, mkdir } from "fs/promises";
+// import path from "path";
+
+// const folderPath = path.resolve("./uploads");
+
+// // Function to clear folder
+// async function clearUploads() {
+//   try {
+//     await rm(folderPath, { recursive: true, force: true });
+//     await mkdir(folderPath, { recursive: true }); // recreate empty folder
+//     console.log(`[${new Date().toISOString()}] Uploads folder cleared`);
+//   } catch (err) {
+//     console.error("Error clearing uploads:", err);
+//   }
+// }
+
+// // Clear every 5 minutes (300,000 ms)
+// setInterval(clearUploads, 7 * 60 * 1000);
+
+// // Optionally run once on startup
+// clearUploads();
 
 
 

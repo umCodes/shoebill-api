@@ -13,18 +13,16 @@ export async function storeTokensInCookies(res: Response, tokens: {access?: stri
     if(tokens?.access)
     res.cookie("access-token", tokens.access, {
         httpOnly: true,
-        // secure: true,
-        // sameSite: 'none',
-        // domain: ".onrender.com",
+        secure: true,
+        sameSite: 'none',
         maxAge: 1000 * 60 * 60 * 24 * 7 //1 week
     });
 
     if(tokens?.refresh){
         res.cookie("refresh-token", tokens.refresh, {
             httpOnly: true,
-            // secure: true,
-            // sameSite: 'none',
-            // domain: ".onrender.com",
+            secure: true,
+            sameSite: 'none',
             maxAge: 1000 * 60 * 60 * 24 * 7 //1 week
         }); 
         

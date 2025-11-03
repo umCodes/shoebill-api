@@ -1,7 +1,8 @@
 import pdf from "pdf-parse";
 import fs from 'fs';
+import fsPromise from 'fs/promises';
 import path from 'path';
-import Tesseract from "tesseract.js";
+import Tesseract, {createWorker} from "tesseract.js";
 import { Poppler } from "node-poppler";
 import { maxClearUpPages, maxNumOfPagesPerPdf, minTextPdfCharLength } from "../constants/constriants.constants";
 import { HttpError } from "../errors/http-error";
@@ -14,7 +15,6 @@ export async function parsePdf(file: Express.Multer.File | undefined){
         const buffer = fs.readFileSync(filePath)
         // console.log(filePath, file);
         const {text, numpages} = (await pdf(buffer));
-
 
         //If file characters are bellow minimum length throw an error
         if(text.length < minTextPdfCharLength)  
@@ -29,70 +29,80 @@ export async function parsePdf(file: Express.Multer.File | undefined){
         fs.unlinkSync(filePath)
         return text.split(/\f/);
     }catch(error){
+        fs.unlinkSync(filePath)
         throw error;
     }
 }
 
 
-export async function ocrScanPdf(file: Express.Multer.File | undefined, isClearup: boolean){
+
+export async function ocrScanPdf(file: Express.Multer.File | undefined){
+    let text = '';
+    let imagesFolder = '';
+    if(!file) throw new HttpError('No file uploaded', 400)
+
+    try {        
+        const {pages, imagesfolderPath} = await convertPagesToImages(file);
+        imagesFolder = imagesfolderPath;
+        for(let i = 1; i <= pages.new; i++){
+            const worker = await createWorker();
+            await worker.loadLanguage('eng');
+            await worker.initialize('eng');
+            const ImagePath = `${imagesfolderPath}/img-${"0".repeat(digitCount(pages.original) - digitCount(i)) + i.toString()}.png`
+            text += (await worker.recognize(ImagePath)).data.text;
+            worker.terminate();
+        }
+
+        fs.unlinkSync(file.path); // delete uploaded pdf file
+        fs.rmSync(imagesfolderPath, { recursive: true }); // delete images folder and its content
+        return text.split(/\f/); // return text as array of strings split by new line
+    } catch (error) {
+        fs.unlinkSync(file.path); // delete uploaded pdf file
+        fs.rmSync(imagesFolder, { recursive: true }); // delete images folder and its content
+        throw error   
+    }
+}
+
+export async function convertPagesToImages(file: Express.Multer.File){
+
     
     if(!file) throw new HttpError('No file uploaded', 400)
 
-    try{        
-        
+    try{
         //Images folder path
         const filePath = file.path;        
         const imagesFolderName = `${Math.floor(Math.random() * 100) + Date.now()}`; 
         const outputDir = path.dirname(filePath);
         const imagesfolderPath = path.join(__dirname, '../../', outputDir, imagesFolderName);
-        
+            
         //Read PDF pages
         const buffer = fs.readFileSync(filePath)
         const {numpages} = await pdf(buffer);
-        const pdfFilePages = numpages > 10 && isClearup ? 10 : numpages;
+        const pdfFilePages = {new: numpages > 5 ? 5 : numpages, original: numpages};
         
         //Create the image pages folder
         fs.mkdirSync(imagesfolderPath)
-    
+
         // Convert PDF → images    
         const poppler = new Poppler();
-        await poppler.pdfToCairo(filePath, imagesfolderPath + "/img" , { pngFile: true, lastPageToConvert: pdfFilePages })
-        
+        await poppler.pdfToCairo(filePath, imagesfolderPath + "/img" , { pngFile: true, lastPageToConvert: pdfFilePages.new })
 
-        //Loop through each image within the created images folder 
-        let text = "";
-        let promises = [];
-
-
-        for(let i = 1; i <= pdfFilePages; i++){
-
-            //Image path
-            const ImagePath = `${imagesfolderPath}/img-${"0".repeat(digitCount(pdfFilePages) - digitCount(i)) + i.toString()}.png`
-            console.log(ImagePath);
-            
-            //Extract text from image:
-            const result = Tesseract.recognize(ImagePath, 'eng'); // To be awaited later in batch
-            promises.push(result); // push promise to array
-
-            //Process in batches of 10 or when the last batch (10 or less images) of images is reached
-            if(i % 10 === 0 || i === pdfFilePages) {
-                const results = await Promise.all(promises); // await all promises in the batch
-                
-                //Append text from batch to a single text string
-                text += results.map(result => result.data.text).join("\f");
-                promises = []; // empty promises for next batch
-            }        
-        
-        }
-        fs.unlinkSync(filePath); // delete uploaded pdf file
-        fs.rmSync(imagesfolderPath, { recursive: true }); // delete images folder and its content
-        return text.split(/\f/); // return text as array of strings split by new line
+        return {pages: pdfFilePages, imagesfolderPath};
     }catch(error){
+        console.log(error);
         throw error;
-    }
+    }        
 
 }
 
+
+
+export async function clearUpUploadsFolder(){
+    
+    const uploadsFolderPath = path.resolve('./uploads');
+    await fsPromise.rm(uploadsFolderPath, { recursive: true, force: true });
+    await fsPromise.mkdir(uploadsFolderPath, { recursive: true }); // recreate uploads folder after deletion
+}
 
 
 //Calculates the number of digits of a Number

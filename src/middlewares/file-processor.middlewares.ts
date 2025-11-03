@@ -15,8 +15,10 @@ export async function processFile(req: CreditsRequest, res: Response, next: Next
     const file_type = body.file_type as "image" | "text";
 
     
+    
     try{
         if(!file) throw new HttpError('File not provided.', 400);
+
         console.log(body);
         
         const buffer = fs.readFileSync(file.path)
@@ -24,15 +26,20 @@ export async function processFile(req: CreditsRequest, res: Response, next: Next
 
 
         let subject: string[] = [];
-        if(file_type === "image") {
-            subject = await ocrScanPdf(file, req.path === "/clearup")
+        console.log(req.path);
+        
+        if(file_type === "image" && req.path === "/clearup") {
+            subject = await ocrScanPdf(file);
             req.credits = Number((creditsPerPage.imagePDF * numpages).toFixed(2))
         }
+
         if(file_type === "text") {            
             subject = await parsePdf(file)
             req.credits = Number((creditsPerPage.textPDF * numpages).toFixed(2))
 
         }
+
+        if (subject.length === 0) throw new HttpError('No text extracted from file.', 400);
         req.body.subject = subject;
         return next()
     }catch(error){
