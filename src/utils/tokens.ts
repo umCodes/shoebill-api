@@ -15,6 +15,10 @@ export async function storeTokensInCookies(res: Response, tokens: {access?: stri
         httpOnly: true,
         secure: true,
         sameSite: 'none',
+<<<<<<< HEAD
+=======
+        // domain: ".onrender.com",
+>>>>>>> a1e725347971dcb09d0e3c7b69fa79294574e932
         maxAge: 1000 * 60 * 60 * 24 * 7 //1 week
     });
 
@@ -23,6 +27,10 @@ export async function storeTokensInCookies(res: Response, tokens: {access?: stri
             httpOnly: true,
             secure: true,
             sameSite: 'none',
+<<<<<<< HEAD
+=======
+            // domain: ".onrender.com",
+>>>>>>> a1e725347971dcb09d0e3c7b69fa79294574e932
             maxAge: 1000 * 60 * 60 * 24 * 7 //1 week
         }); 
         
