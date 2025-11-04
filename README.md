@@ -1,4 +1,4 @@
-# shoebill ai
+# Shoebill AI - API
 
 An AI-powered quiz generation and paper clean‑up API. Upload PDFs (text or scanned), extract content with OCR when needed, and generate structured quizzes with difficulty control. Track quiz history, enforce per‑page and per‑question credits, and validate user answers via an LLM.
 
