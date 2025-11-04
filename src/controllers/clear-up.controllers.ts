@@ -6,8 +6,9 @@ import { CreditsRequest } from "../middlewares/file-processor.middlewares";
 import { getCollection } from "../db/db";
 import { User } from "../models/user.types";
 import { ObjectId } from "mongodb";
-import { ai, clearUpPrompt } from "../utils/llm";
+import { ai } from "../utils/llm";
 import { subtractUserCredits } from "../utils/credits";
+import { clearUpPrompt } from "../utils/prompts";
 
 
 
