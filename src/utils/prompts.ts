@@ -7,7 +7,10 @@ export function quizPrompt({ subject, qTypes, difficulty, number, prev }: QuizPr
 
     Rules:
     1. Stick strictly to the subject, even if it is long.
-    2. The number of questions must exactly equal ${number}. No fewer, no more.
+    2. The number of questions must exactly equal ${number}. No fewer, no more, unless: 
+        - If duplicates are unavoidable, omit repeated questions.
+        - It is acceptable to generate fewer than ${number} questions rather than duplicating any question.
+
 
     Validation:
     - If the input is not an academic topic, essay, book, lecture note, or any educational text (e.g., exam paper, non-educational content, vague/unrelated topic, casual query, command, or general conversation):
