@@ -190,4 +190,6 @@ Note: OCR with `tesseract.js` and `node-poppler` may require additional system l
 - OCR is slow: large scans are CPU‑intensive; consider page limits and queues
 
 
+### License
+Proprietary — All rights reserved unless otherwise stated.
 
