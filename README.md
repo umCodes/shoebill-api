@@ -60,7 +60,7 @@ OPEN_ROUTER_API_KEY=your_openrouter_key
 ## Installation and setup
 
 ```bash
-git clone <repo-url> shoebill-ai
+git clone https://github.com/umCodes/shoebill-api 
 cd shoebill-ai
 npm install
 cp .env.example .env  # if provided; otherwise create .env using the table above
@@ -190,7 +190,4 @@ Note: OCR with `tesseract.js` and `node-poppler` may require additional system l
 - OCR is slow: large scans are CPU‑intensive; consider page limits and queues
 
 
-## License
-
-Add your preferred license (MIT suggested) and include a `LICENSE` file.
 
