@@ -110,12 +110,6 @@ Tokens are managed via cookies; routes under `/api` are protected by refresh/acc
 - `GET /api/quiz?id=<quizId>` — get a specific quiz
 - `DELETE /api/quiz?id=<quizId>` — delete a quiz
 
-### Answer checking
-
-- `POST /api/check` — body: `{ question, answer, explanation }`
-  - Validates inputs and checks correctness vs. `explanation` via LLM
-  - Returns `{ valid: boolean, correct?: boolean, reason?: string }`
-
 ### Users
 
 - `GET /user` — returns authenticated user
