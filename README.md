@@ -3,6 +3,9 @@
 An AI-powered quiz generation and paper clean‑up API. Upload PDFs (text or scanned), extract content with OCR when needed, and generate structured quizzes with difficulty control. Track quiz history, enforce per‑page and per‑question credits, and validate user answers via an LLM.
 
 > Calm, precise, effective — like the shoebill.
+🔗 [Live Demo](https://shoebill-ui.onrender.com/)
+🎨 [Frontend repo](https://github.com/umCodes/shoebill-ui)
+
 
 
 ## Features
